@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     alsa-utils \
     ffmpeg \
     nginx \
+    python3 \
     apache2-utils \
     libgl1-mesa-dri \
     libgl1-mesa-glx \
