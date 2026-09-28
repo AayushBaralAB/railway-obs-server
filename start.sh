@@ -1,22 +1,23 @@
 #!/bin/bash
 
-set -u
-
 echo "====================================="
 echo " Railway Virtual OBS Server"
+echo " START SCRIPT VERSION: 2026-09-28"
 echo "====================================="
 
-echo "[1/6] Starting Xvfb..."
+set -u
+
+echo "[1] Xvfb"
 Xvfb :1 -screen 0 1280x720x24 &
 sleep 3
 
 export DISPLAY=:1
 
-echo "[2/6] Starting XFCE..."
+echo "[2] XFCE"
 startxfce4 &
 sleep 8
 
-echo "[3/6] Starting x11vnc..."
+echo "[3] x11vnc"
 x11vnc \
   -display :1 \
   -forever \
@@ -28,7 +29,7 @@ x11vnc \
 
 sleep 3
 
-echo "[4/6] Starting websockify..."
+echo "[4] websockify"
 websockify \
   --web=/usr/share/novnc \
   6080 \
@@ -36,24 +37,24 @@ websockify \
 
 sleep 3
 
-echo "[5/6] Starting login server..."
+echo "[5] LOGIN SERVER"
 python3 /login.py > /var/log/login.log 2>&1 &
 
-sleep 3
+sleep 2
 
-echo "----- LOGIN SERVER LOG -----"
+echo "===== LOGIN LOG ====="
 cat /var/log/login.log || true
-echo "----------------------------"
+echo "====================="
 
-echo "[6/6] Starting Nginx..."
+echo "[6] NGINX"
 
 PORT_VALUE="${PORT:-8080}"
 
 sed -i "s/listen 8080;/listen ${PORT_VALUE};/" /etc/nginx/nginx.conf
 
-echo "Nginx port: ${PORT_VALUE}"
+echo "PORT = ${PORT_VALUE}"
 
 nginx -t
 
-echo "Starting Nginx..."
+echo "===== NGINX START ====="
 exec nginx -g "daemon off;"
