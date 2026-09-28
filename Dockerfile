@@ -19,9 +19,7 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     nginx \
     python3 \
-    apache2-utils \
     libgl1-mesa-dri \
-    libgl1-mesa-glx \
     libegl1 \
     libglx-mesa0 \
     mesa-utils \
@@ -37,15 +35,13 @@ RUN add-apt-repository ppa:obsproject/obs-studio \
     && apt-get install -y obs-studio \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy configuration files
+# Configuration files
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /start.sh
 COPY login.py /login.py
 
 RUN chmod +x /start.sh
-
-# Login credentials
 
 EXPOSE 8080
 
