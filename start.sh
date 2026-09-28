@@ -1,74 +1,59 @@
 #!/bin/bash
 
-set -e
+set -u
 
 echo "====================================="
 echo " Railway Virtual OBS Server"
 echo "====================================="
 
-export LIBGL_ALWAYS_SOFTWARE=1
-export QT_X11_NO_MITSHM=1
+echo "[1/6] Starting Xvfb..."
+Xvfb :1 -screen 0 1280x720x24 &
+sleep 3
+
 export DISPLAY=:1
 
-echo "[1/7] Starting Xvfb..."
-
-Xvfb :1 \
-    -screen 0 1280x720x24 \
-    -ac \
-    +extension GLX \
-    +render \
-    -noreset &
-
-sleep 3
-
-echo "[2/7] Starting DBus..."
-
-eval "$(dbus-launch --sh-syntax)"
-
-echo "[3/7] Starting XFCE..."
-
+echo "[2/6] Starting XFCE..."
 startxfce4 &
-
 sleep 8
 
-echo "[4/7] Starting x11vnc..."
-
+echo "[3/6] Starting x11vnc..."
 x11vnc \
-    -display :1 \
-    -forever \
-    -shared \
-    -nopw \
-    -rfbport 5900 \
-    -noxdamage \
-    -listen 127.0.0.1 &
+  -display :1 \
+  -forever \
+  -shared \
+  -rfbport 5900 \
+  -localhost \
+  -nopw \
+  -noxdamage &
 
 sleep 3
 
-echo "[5/7] Starting noVNC..."
-
+echo "[4/6] Starting websockify..."
 websockify \
-    --web=/usr/share/novnc \
-    127.0.0.1:6080 \
-    127.0.0.1:5900 &
+  --web=/usr/share/novnc \
+  6080 \
+  localhost:5900 &
 
 sleep 3
 
-echo "[6/7] Starting Login Server..."
+echo "[5/6] Starting login server..."
+python3 /login.py > /var/log/login.log 2>&1 &
 
-python3 /login.py &
+sleep 3
 
-sleep 2
+echo "----- LOGIN SERVER LOG -----"
+cat /var/log/login.log || true
+echo "----------------------------"
 
-echo "[7/7] Starting Nginx..."
+echo "[6/6] Starting Nginx..."
 
-sed -i "s/listen 8080;/listen ${PORT:-8080};/" /etc/nginx/nginx.conf
+PORT_VALUE="${PORT:-8080}"
+
+sed -i "s/listen 8080;/listen ${PORT_VALUE};/" /etc/nginx/nginx.conf
+
+echo "Nginx will listen on port: ${PORT_VALUE}"
 
 nginx -t
 
-echo "====================================="
-echo " Login server ready"
-echo " noVNC ready"
-echo " Nginx ready"
-echo "====================================="
-
-nginx -g "daemon off;"
+echo "Starting Nginx..."
+exec nginx -g "daemon off;"
