@@ -40,6 +40,7 @@ RUN add-apt-repository ppa:obsproject/obs-studio \
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /start.sh
+COPY login.py /login.py
 
 RUN chmod +x /start.sh
 
