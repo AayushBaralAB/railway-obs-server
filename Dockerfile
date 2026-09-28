@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     pulseaudio-utils \
     alsa-utils \
     ffmpeg \
+    nginx \
+    apache2-utils \
     libgl1-mesa-dri \
     libgl1-mesa-glx \
     libegl1 \
@@ -25,19 +27,24 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb1 \
     libxcb-xinerama0 \
     libxcb-cursor0 \
+    software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# OBS repository
-RUN apt-get update && apt-get install -y software-properties-common \
-    && add-apt-repository ppa:obsproject/obs-studio \
+# OBS
+RUN add-apt-repository ppa:obsproject/obs-studio \
     && apt-get update \
     && apt-get install -y obs-studio \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy configuration files
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /start.sh
 
 RUN chmod +x /start.sh
+
+# Login credentials
+RUN htpasswd -bc /etc/nginx/.htpasswd stream.aayushbaral.com stream.aayushbaral.com
 
 EXPOSE 8080
 
