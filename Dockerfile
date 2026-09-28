@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     nginx \
     python3 \
+    apache2-utils \
     libgl1-mesa-dri \
     libegl1 \
     libglx-mesa0 \
@@ -29,13 +30,11 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# OBS
 RUN add-apt-repository ppa:obsproject/obs-studio \
     && apt-get update \
     && apt-get install -y obs-studio \
     && rm -rf /var/lib/apt/lists/*
 
-# Configuration files
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /start.sh
