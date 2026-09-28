@@ -17,6 +17,14 @@ RUN apt-get update && apt-get install -y \
     pulseaudio-utils \
     alsa-utils \
     ffmpeg \
+    libgl1-mesa-dri \
+    libgl1-mesa-glx \
+    libegl1 \
+    libglx-mesa0 \
+    mesa-utils \
+    libx11-xcb1 \
+    libxcb-xinerama0 \
+    libxcb-cursor0 \
     && rm -rf /var/lib/apt/lists/*
 
 # OBS repository
