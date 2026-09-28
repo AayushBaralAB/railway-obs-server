@@ -45,7 +45,6 @@ COPY login.py /login.py
 RUN chmod +x /start.sh
 
 # Login credentials
-RUN htpasswd -bc /etc/nginx/.htpasswd stream.aayushbaral.com stream.aayushbaral.com
 
 EXPOSE 8080
 
