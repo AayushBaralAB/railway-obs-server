@@ -51,7 +51,7 @@ PORT_VALUE="${PORT:-8080}"
 
 sed -i "s/listen 8080;/listen ${PORT_VALUE};/" /etc/nginx/nginx.conf
 
-echo "Nginx will listen on port: ${PORT_VALUE}"
+echo "Nginx port: ${PORT_VALUE}"
 
 nginx -t
 
