@@ -35,7 +35,7 @@ websockify \
     localhost:5900 &
 
 echo "Desktop started."
-echo "noVNC listening on port ${PORT:-8080}."
+echo "noVNC listening on port 8080."
 
 # Start supervisor
 exec /usr/bin/supervisord -n
